@@ -1,0 +1,74 @@
+# Example BC-QACL-ATD configuration (130-nm SiGe, 30-80 GHz two-stage PA).
+# Mirrors the six design-flow steps. Copy and edit for your own design.
+
+# ----- Step 1: process / metal stack -----------------------------------------
+technology:
+  name: GF_130nm_SiGe
+  eps_r:        {Air: 1.0, SiO2: 4.1, Si: 11.9}
+  tan_delta:    {Air: 0.0, SiO2: 0.01, Si: 0.0}
+  sigma_S_per_m: {Metal1: 3.57e8, Metal2: 5.56e8, MetalGND: 4.916e8}
+  metal_thickness_um: {Metal1: 4.0, Metal2: 3.0}
+  use_loss: true
+  z0_ohm: 50.0
+  w_sgcl_over_wc: 0.75      # SG-CL conductor-width calibration constant
+  w_slot_over_wc: 1.8       # SG-CL ground-slot-width calibration constant
+  lport_um: 5.0             # coupling-length layout constants (C_l)
+  wport_um: 10.0
+  width_open_um: 24.0
+
+# ----- Step 1: PA-level targets ----------------------------------------------
+target:
+  band_lo_ghz: 30.0
+  band_hi_ghz: 80.0
+  gain_lo_db: 16.0
+  gain_hi_db: 20.0
+  peak_lo_ghz: 25.0
+  peak_hi_ghz: 90.0
+  total_length_budget_um: 480.0   # floor-plan: sum_n W_TF,n * alpha_L/W,n
+
+# ----- Step 1: biased transistor blocks + load-pull Z_OPT(f) -----------------
+# Provide your own single-ended 4-port S-parameters (stable above >= 0.5*band_lo)
+# and a single-transistor load-pull Z_OPT(f). P_sat is targeted indirectly via Z_OPT.
+transistor:
+  driver_s4p: data/transistor/driver_2x12_single_ended_z0_50.s4p
+  power_s4p:  data/transistor/power_2x18_single_ended_z0_50.s4p
+  loadpull_xlsx: data/loadpull/loadpull_marker_stats_30_80GHz.xlsx
+  loadpull_sheet: null
+
+# ----- Step 2a: design space (subset of validated model box) ------------------
+design_space:
+  n_matching_networks: 3            # IMN, ISMN, OMN
+  w_tf_um:   {lo: 90.0,  hi: 120.0, step: 0.5}
+  alpha_lw:  {lo: 0.8,   hi: 2.0,   step: 0.01}
+  alpha_wcw: {lo: 0.15,  hi: 0.30,  step: 0.005}
+
+# ----- Step 2b: 27 anchors + L_b calibration ---------------------------------
+anchors:
+  anchor_dir: data/em_anchors
+  full_tf_glob: "full_*.s6p"        # 27 full-transformer six-ports
+  half_tf_glob: "half_*.s4p"        # 27 half-transformer four-ports
+  lb_law_json: null                 # set to a saved law to skip fitting (e.g. paper coefficients)
+  fit_full_model: true              # 8-coefficient (true) vs first-order 4-coefficient
+
+# ----- Steps 3-5: CMA-ES inner-loop search -----------------------------------
+optimizer:
+  popsize: 20          # candidates per generation (lambda)
+  generations: 10      # generations per restart
+  restarts: 6          # independent restarts; total evals ~ popsize*generations*restarts
+  sigma0: 0.26
+  seed: 20260608
+  w_gain: 1.0          # objective weights only steer exploration;
+  w_bandwidth: 1.0     # the final design is taken from the (G,B,Z) Pareto front
+  w_impedance: 1.0
+  polish_top_k: 30     # local coordinate refinement on best feasible designs
+  polish_rounds: 2
+  polish_radius: 2
+
+paths:
+  output_dir: outputs/run_30_80GHz
+  cache_dir: cache
+
+# inner-loop frequency grid (GHz)
+freq_start_ghz: 1.0
+freq_stop_ghz: 110.0
+freq_step_ghz: 1.0

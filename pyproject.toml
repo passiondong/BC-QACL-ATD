@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bcqacl-atd"
+version = "0.1.0"
+description = "Bridge-Compensated Quasi-Analytical Coupled-Line Automated Transformer Design (BC-QACL-ATD): an EM-free inner-loop synthesis flow for mm-wave transformer-coupled power amplifiers."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Qin Dong" }]
+keywords = ["mmwave", "power-amplifier", "transformer", "coupled-line", "automated-design", "scikit-rf", "CMA-ES"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-rf>=0.29",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "matplotlib>=3.7",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+gui = ["streamlit>=1.30"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+bcqacl-atd = "bcqacl_atd.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/passiondong/BC-QACL-ATD"
+Paper = "https://doi.org/<tmtt-doi-when-available>"
+
+[tool.setuptools.packages.find]
+where = ["src"]

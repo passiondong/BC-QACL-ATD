@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Tooling
+.idea/
+.vscode/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Run outputs (designs, caches, figures) -- keep the repo light
+outputs/
+runs/
+cache/
+*.s6p.cache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large/user-supplied EM + measurement data (provide your own; see docs/data.md)
+data/em_anchors/*.s*p
+data/transistor/*.s*p
+data/loadpull/*.xlsx
+!data/**/.gitkeep
+!data/**/README*

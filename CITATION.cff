@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "BC-QACL-ATD: Bridge-Compensated Quasi-Analytical Coupled-Line Automated Transformer Design"
+authors:
+  - family-names: Dong
+    given-names: Qin
+license: MIT
+repository-code: "https://github.com/passiondong/BC-QACL-ATD"
+preferred-citation:
+  type: article
+  title: "Bridge-Compensated Quasi-Analytical Coupled-Line Model for Automated Transformer Design: A 34.5-78.5 GHz SiGe Power Amplifier Demonstration"
+  authors:
+    - family-names: Dong
+      given-names: Qin
+  journal: "IEEE Transactions on Microwave Theory and Techniques"
+  year: 2026
+  notes: "Under review. Update volume/issue/pages/DOI on acceptance."

@@ -1,0 +1,31 @@
+# Runnable demo with synthetic data (no proprietary EM/transistor files needed).
+# 1) Generate the data:  python -c "from bcqacl_atd.data_io import make_demo_dataset; make_demo_dataset('examples/demo_data')"
+#    (or click "Generate synthetic demo data" in the Streamlit wizard)
+# 2) Run:  bcqacl-atd run -c configs/demo_synthetic.yaml
+# Synthetic data is for learning/smoke-testing the flow only -- not physical.
+
+target:
+  band_lo_ghz: 30.0
+  band_hi_ghz: 80.0
+  gain_lo_db: -10.0      # wide window so the synthetic demo reliably yields a front
+  gain_hi_db: 40.0
+  peak_lo_ghz: 25.0
+  peak_hi_ghz: 90.0
+  total_length_budget_um: 480.0
+
+transistor:
+  driver_s4p: examples/demo_data/driver_demo.s4p
+  power_s4p: examples/demo_data/power_demo.s4p
+  loadpull_xlsx: examples/demo_data/loadpull_demo.xlsx
+
+optimizer:
+  popsize: 8
+  generations: 2
+  restarts: 1
+  sigma0: 0.26
+  seed: 20260608
+  l13_model: anchors8     # embedded calibrated law; no anchor files needed
+  polish_rounds: 0
+
+paths:
+  output_dir: outputs/demo_synthetic

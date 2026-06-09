@@ -1,0 +1,38 @@
+# Paper reproduction config (130-nm SiGe, 34.5-78.5 GHz two-stage PA).
+# Reproduces the selected design and the (G,B,Z) Pareto front from the paper.
+# You must supply the two biased transistor blocks and the load-pull Z_OPT(f).
+
+target:
+  band_lo_ghz: 30.0
+  band_hi_ghz: 80.0
+  gain_lo_db: 16.9        # paper gain window
+  gain_hi_db: 20.1
+  peak_lo_ghz: 25.0
+  peak_hi_ghz: 90.0
+  total_length_budget_um: 480.0
+
+transistor:
+  # name your files exactly as below, or point these at your own and the flow stages them:
+  driver_s4p: data/transistor/driver_2x12_single_ended_z0_50.s4p
+  power_s4p: data/transistor/final_2x18_single_ended_z0_50.s4p
+  loadpull_xlsx: data/loadpull/loadpull_marker_stats_30_80GHz.xlsx
+
+design_space:
+  n_matching_networks: 3
+  w_tf_um:   {lo: 90.0,  hi: 120.0, step: 0.5}
+  alpha_lw:  {lo: 0.8,   hi: 2.0,   step: 0.01}
+  alpha_wcw: {lo: 0.15,  hi: 0.30,  step: 0.005}
+
+optimizer:
+  popsize: 20
+  generations: 10
+  restarts: 6
+  sigma0: 0.26
+  seed: 20260608          # paper seed
+  l13_model: anchors8     # paper L13 source
+  polish_rounds: 2
+  polish_top_k: 30
+  polish_radius: 2
+
+paths:
+  output_dir: outputs/paper_repro

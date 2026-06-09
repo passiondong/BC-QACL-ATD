@@ -1,0 +1,14 @@
+# Core numerics / RF
+numpy>=1.24
+scipy>=1.10
+scikit-rf>=0.29
+pandas>=2.0
+openpyxl>=3.1          # read load-pull / Zopt Excel sheets
+matplotlib>=3.7        # Pareto / S-parameter plots
+
+# Config + GUI
+PyYAML>=6.0
+streamlit>=1.30        # step-wizard GUI (optional; CLI works without it)
+
+# Optional: external CMA-ES (the package also ships a self-contained CMA-ES)
+# cma>=3.3

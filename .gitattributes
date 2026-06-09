@@ -1,0 +1,13 @@
+# Normalize line endings across platforms
+* text=auto eol=lf
+
+# Touchstone S-parameter files are text
+*.s2p text eol=lf
+*.s4p text eol=lf
+*.s6p text eol=lf
+
+# Binary assets
+*.xlsx binary
+*.png binary
+*.pdf binary
+*.svg binary
