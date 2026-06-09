@@ -51,14 +51,20 @@ number.
 
 ## Install
 
-```bash
-git clone https://github.com/passiondong/BC-QACL-ATD.git bcqacl-atd && cd bcqacl-atd
-python -m venv .venv && . .venv/Scripts/activate   # Windows; use bin/activate on *nix
-pip install -e .            # core (numpy, scipy, scikit-rf, pandas, openpyxl, matplotlib, pyyaml)
-pip install -e ".[gui]"     # + Streamlit wizard
+```powershell
+git clone https://github.com/passiondong/BC-QACL-ATD.git bcqacl-atd
+cd bcqacl-atd
+py -m venv .venv                    # Windows launcher (python3 on macOS/Linux)
+Set-ExecutionPolicy -Scope Process -Bypass -Force   # allow venv activation this session
+.\.venv\Scripts\Activate.ps1        # macOS/Linux: source .venv/bin/activate
+python -m pip install -e ".[gui]"   # deps + Streamlit wizard + the bcqacl-atd command
 ```
 
-Python ≥ 3.10.
+Python ≥ 3.10. After the prompt shows `(.venv)`, the `streamlit` and `bcqacl-atd`
+commands work. **No venv?** Run everything through the launcher instead:
+`py -m pip install -r requirements.txt`, then
+`py -m streamlit run src/bcqacl_atd/app/wizard.py`, and
+`$env:PYTHONPATH="src"; py -m bcqacl_atd.cli run --config configs/example_pa_30_80GHz.yaml`.
 
 ## Usage
 

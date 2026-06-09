@@ -1,11 +1,18 @@
 # Getting started (5 minutes)
 
 ## Install
-```bash
-git clone https://github.com/passiondong/BC-QACL-ATD.git bcqacl-atd && cd bcqacl-atd
-python -m venv .venv && . .venv/Scripts/activate     # Windows (.venv/bin/activate on macOS/Linux)
-pip install -e ".[gui]"
+```powershell
+git clone https://github.com/passiondong/BC-QACL-ATD.git bcqacl-atd
+cd bcqacl-atd
+py -m venv .venv                               # Windows launcher (python3 on macOS/Linux)
+Set-ExecutionPolicy -Scope Process -Bypass -Force   # allow venv activation this session
+.\.venv\Scripts\Activate.ps1                   # macOS/Linux: source .venv/bin/activate
+python -m pip install -e ".[gui]"
 ```
+After the prompt shows `(.venv)`, the `streamlit` and `bcqacl-atd` commands work.
+**Don't want a venv?** Use the launcher instead: `py -m pip install -r requirements.txt`,
+then `py -m streamlit run src/bcqacl_atd/app/wizard.py`, and
+`$env:PYTHONPATH="src"; py -m bcqacl_atd.cli run --config configs/demo_synthetic.yaml`.
 
 ## Try it on synthetic data (no proprietary files needed)
 ```bash
