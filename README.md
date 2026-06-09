@@ -54,31 +54,32 @@ number.
 ```powershell
 git clone https://github.com/passiondong/BC-QACL-ATD.git bcqacl-atd
 cd bcqacl-atd
-py -m venv .venv                    # Windows launcher (python3 on macOS/Linux)
-Set-ExecutionPolicy -Scope Process -Bypass -Force   # allow venv activation this session
-.\.venv\Scripts\Activate.ps1        # macOS/Linux: source .venv/bin/activate
-python -m pip install -e ".[gui]"   # deps + Streamlit wizard + the bcqacl-atd command
+py -m pip install -e ".[gui]"     # Windows; macOS/Linux: python3 -m pip install -e ".[gui]"
 ```
 
-Python ≥ 3.10. After the prompt shows `(.venv)`, the `streamlit` and `bcqacl-atd`
-commands work. **No venv?** Run everything through the launcher instead:
-`py -m pip install -r requirements.txt`, then
-`py -m streamlit run src/bcqacl_atd/app/wizard.py`, and
-`$env:PYTHONPATH="src"; py -m bcqacl_atd.cli run --config configs/example_pa_30_80GHz.yaml`.
+Python ≥ 3.10. That's all — **no virtual environment or PowerShell policy change
+is needed.** On Windows, run the tools through the `py` launcher (see Usage); the
+bare `streamlit` / `bcqacl-atd` commands only exist after a venv is activated. If
+the editable install errors, use `py -m pip install -r requirements.txt` instead.
+
+> **Optional isolated venv** (no activation needed — call the interpreter directly):
+> `py -m venv .venv`, then `.venv\Scripts\python.exe -m pip install -e ".[gui]"` and
+> `.venv\Scripts\python.exe -m streamlit run src/bcqacl_atd/app/wizard.py`.
 
 ## Usage
 
 **Streamlit wizard (recommended):**
-```bash
-streamlit run src/bcqacl_atd/app/wizard.py
+```powershell
+py -m streamlit run src/bcqacl_atd/app/wizard.py
 ```
-A step-by-step UI walks you through Steps 1–6, validates your data, runs the
+This opens `http://localhost:8501`; the server keeps running in the terminal
+(press **Ctrl+C** to stop). A step-by-step UI walks you through Steps 1–6, validates your data, runs the
 calibration and CMA-ES search, shows the Pareto front, and exports the chosen
 design + an EM-verification checklist.
 
 **CLI / config-driven:**
-```bash
-bcqacl-atd run --config configs/example_pa_30_80GHz.yaml
+```powershell
+py -m bcqacl_atd.cli run --config configs/example_pa_30_80GHz.yaml
 ```
 
 **Library:**
@@ -105,7 +106,7 @@ See [`docs/data.md`](docs/data.md) for the exact naming/format conventions.
 
 The repo ships the **calibrated `L_b` coefficients** and the design-box / CMA-ES
 settings used in the paper. With your (or the provided) anchor EM data and the
-two transistor blocks, `bcqacl-atd run --config configs/paper_repro.yaml`
+two transistor blocks, `py -m bcqacl_atd.cli run --config configs/paper_repro.yaml`
 reproduces the selected geometry
 `IMN (111.5 µm, 1.38, 0.250) / ISMN (103.0 µm, 1.28, 0.235) / OMN (101.0 µm, 1.78, 0.245)`
 and the `(G, B, Z)` Pareto front.
@@ -117,8 +118,8 @@ technology / design box**, re-fit the log-trilinear law from your own 27 anchor
 EM files (`full_*.s6p` + `half_*.s4p`, 3×3×3 min/center/max — pick them with
 `bcqacl_atd.lb_law.select_anchor_grid`):
 
-```bash
-bcqacl-atd calibrate-lb --anchor-dir data/em_anchors --out lb_law.json
+```powershell
+py -m bcqacl_atd.cli calibrate-lb --anchor-dir data/em_anchors --out lb_law.json
 ```
 This extracts L_b per anchor (assembler-fit of the half-transformer + bridge to
 your full-transformer EM), fits the law, and writes `lb_law.json`. Point your
