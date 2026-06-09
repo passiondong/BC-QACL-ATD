@@ -23,6 +23,10 @@ runs/
 cache/
 *.s6p.cache
 
+# Wizard-saved / uploaded config artifacts (regenerated locally)
+bcqacl_config.yaml
+uploaded_config.yaml
+
 # OS
 .DS_Store
 Thumbs.db

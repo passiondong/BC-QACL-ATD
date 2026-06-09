@@ -3,7 +3,7 @@
 User-supplied inputs (your own, not shipped):
   * biased transistor S-parameters (single-ended 4-port, Z0 = 50 ohm)
   * load-pull Z_OPT(f) of one power-device transistor (Excel)
-  * (for the L13 "full80-log-trilinear" model only) 27 anchor Touchstone files
+  * (for the L_b (L12/L34) "full80-log-trilinear" model only) 27 anchor Touchstone files
 
 The actual loading at run time is done by the vendored ``pa_synthesis`` loaders;
 this module adds (a) validation with friendly messages for the wizard/CLI, and
@@ -118,8 +118,8 @@ def validate_inputs(cfg: Config) -> dict[str, object]:
         checks[label] = ok
         if not ok:
             issues.append(f"missing {label}: {p}")
-    # Anchors are only required for the 'full80-log-trilinear' L13 model.
-    if cfg.optimizer.l13_model == "full80-log-trilinear":
+    # Anchors are only required for the 'full80-log-trilinear' L_b (L12/L34) model.
+    if cfg.optimizer.lb_model == "full80-log-trilinear":
         adir = Path(cfg.anchors.anchor_dir)
         n_full = len(list(adir.glob(cfg.anchors.full_tf_glob))) if adir.exists() else 0
         n_half = len(list(adir.glob(cfg.anchors.half_tf_glob))) if adir.exists() else 0
@@ -127,7 +127,7 @@ def validate_inputs(cfg: Config) -> dict[str, object]:
         checks["anchors_half"] = n_half
         if n_full < 27 or n_half < 27:
             issues.append(
-                f"L13 model 'full80-log-trilinear' expects 27 full + 27 half anchor files; "
+                f"L_b model 'full80-log-trilinear' expects 27 full + 27 half anchor files; "
                 f"found {n_full} full, {n_half} half in {adir}"
             )
     return {"ok": len(issues) == 0, "checks": checks, "issues": issues}

@@ -30,9 +30,9 @@ make_demo_dataset("examples/demo_data")
   input impedance, referred to one side as `Z_diff/2`, toward this `Z_OPT_single`.
 - Config key: `transistor.loadpull_xlsx`.
 
-## 3. Anchor EM data (only for `l13_model: full80-log-trilinear`)
+## 3. Anchor EM data (only for `lb_model: full80-log-trilinear`)
 
-The default `l13_model: anchors8` uses the embedded calibrated L_b law and needs
+The default `lb_model: anchors8` uses the embedded calibrated L_b law and needs
 **no** anchor files. To re-calibrate the log-trilinear L_b law for a new
 technology/box, supply the **27 anchor geometries** (3×3×3 = min/center/max of
 each of `W_TF`, `α_L/W`, `α_wc/W`; use

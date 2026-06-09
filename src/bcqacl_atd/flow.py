@@ -54,7 +54,7 @@ def build_namespace(
         previous_seed_count=0,
         requested_random_seed_count=0,
         random_seed_count=max(50, int(opt.popsize) * 4),
-        l13_model=str(opt.l13_model),
+        l13_model=str(opt.lb_model),  # kernel namespace key stays l13_model; this is the paper's L_b (L12/L34)
         allow_extrapolation=bool(opt.allow_extrapolation),
         line_length_scale=None,
         gnd_width_factor=None,

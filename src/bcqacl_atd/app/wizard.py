@@ -125,14 +125,14 @@ def step3() -> None:
         rng.lo = c1.number_input(f"{label} — min", value=float(rng.lo), format="%.4f")
         rng.hi = c2.number_input(f"{label} — max", value=float(rng.hi), format="%.4f")
         rng.step = c3.number_input(f"{label} — step", value=float(rng.step), format="%.4f")
-    st.subheader("L_b (bridge inductance) model")
-    cfg.optimizer.l13_model = st.selectbox(
-        "L13 / L_b source", ["anchors8", "full80-log-trilinear"],
-        index=0 if cfg.optimizer.l13_model == "anchors8" else 1,
+    st.subheader("L_b (L12/L34) bridge-inductance model")
+    cfg.optimizer.lb_model = st.selectbox(
+        "L_b (L12/L34) source", ["anchors8", "full80-log-trilinear"],
+        index=0 if cfg.optimizer.lb_model == "anchors8" else 1,
         help="'anchors8' uses the embedded calibrated law (no extra files). "
         "'full80-log-trilinear' fits the 8-coefficient law from your 27 anchor EM files.",
     )
-    if cfg.optimizer.l13_model == "full80-log-trilinear":
+    if cfg.optimizer.lb_model == "full80-log-trilinear":
         cfg.anchors.anchor_dir = st.text_input("Anchor EM directory (27 full + 27 half)", cfg.anchors.anchor_dir)
         st.caption("Anchor grid = 3×3×3 min/center/max of (W_TF, α_L/W, α_wc/W); see docs/data.md.")
 
@@ -183,7 +183,7 @@ def step5() -> None:
     if not rep["ok"]:
         st.error("Resolve Step-2 inputs first:\n- " + "\n- ".join(rep["issues"]))
         return
-    st.caption(f"L13 model: **{cfg.optimizer.l13_model}**")
+    st.caption(f"L_b (L12/L34) model: **{cfg.optimizer.lb_model}**")
     if st.button("▶ Run synthesis", type="primary"):
         from bcqacl_atd import flow
         with st.spinner("Running CMA-ES inner-loop search (EM-free)… this can take minutes."):

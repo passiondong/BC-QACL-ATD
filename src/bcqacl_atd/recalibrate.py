@@ -9,8 +9,9 @@ Procedure (per anchor):
   1. Load the full-transformer six-port EM (``full_*.s6p``) and the matching
      half-transformer four-port EM (``half_*.s4p``).
   2. Assemble a predicted six-port from the half-transformer plus a single bridge
-     inductance L13 = L_b (L24 open, L56 short -- the cal0529 policy), using the
-     vendored ``TF_Cal_S6P_Predicting_0504`` assembler.
+     inductance L_b (L12/L34; the kernel calls this slot L13), with L24 open and
+     L56 short -- the cal0529 policy -- using the vendored
+     ``TF_Cal_S6P_Predicting_0504`` assembler.
   3. Fit the scalar L_b that makes the predicted six-port best match the full EM
      over the band (bounded 1-D least squares).
 
@@ -33,7 +34,7 @@ import numpy as np
 
 from . import kernels  # noqa: F401  -- sys.path shim
 import TF_Cal_S6P_Predicting_0504 as _tf0504  # type: ignore
-import tf_analysis_pipeline_cli_0520 as _base  # type: ignore  (calc1 L13 base)
+import tf_analysis_pipeline_cli_0520 as _base  # type: ignore  (kernel L_b base: predict_l13_nH / L13Prediction)
 
 from .lb_law import LogTrilinearLbLaw
 
@@ -56,7 +57,7 @@ def parse_geometry(name: str) -> tuple[float, float, float] | None:
     return W, R, Q
 
 
-def _predicted_six_port(half_s4p_path: Path, L13_nH: float, comp_freq_ghz: np.ndarray, z0: float):
+def _predicted_six_port(half_s4p_path: Path, lb_nH: float, comp_freq_ghz: np.ndarray, z0: float):
     import skrf as rf
 
     cfg = dict(_tf0504.CFG)
@@ -67,7 +68,7 @@ def _predicted_six_port(half_s4p_path: Path, L13_nH: float, comp_freq_ghz: np.nd
         "f_stop_ghz": float(comp_freq_ghz[-1]),
         "f_step_ghz": float(comp_freq_ghz[1] - comp_freq_ghz[0]),
         "z0": float(z0),
-        "L13_nH": float(L13_nH),
+        "L13_nH": float(lb_nH),  # kernel dict key; value is the paper's L_b (L12/L34)
         "L24_nH": L24_OPEN_NH,
         "L56_pH": L56_SHORT_PH,
         "s4p_port_order": S4P_PORT_ORDER,
@@ -98,8 +99,8 @@ def fit_lb_for_anchor(
     full_i = full.interpolate(target)
     denom = float(np.sum(np.abs(full_i.s) ** 2)) or 1.0
 
-    def resid(L13: float) -> float:
-        pred = _predicted_six_port(Path(half_s4p_path), L13, comp, z0)
+    def resid(lb: float) -> float:
+        pred = _predicted_six_port(Path(half_s4p_path), lb, comp, z0)
         pred_i = pred if (len(pred.f) == len(comp) and np.allclose(pred.f, comp * 1e9)) else pred.interpolate(target)
         return float(np.sum(np.abs(pred_i.s - full_i.s) ** 2)) / denom
 
@@ -192,7 +193,7 @@ def recalibrate_lb_law(
 
 
 def install_custom_lb_law(law: LogTrilinearLbLaw) -> None:
-    """Replace the embedded ``predict_l13_nH`` with one driven by ``law``.
+    """Replace the kernel's embedded L_b predictor (``predict_l13_nH``) with one driven by ``law``.
 
     Call this before running the synthesis to use a re-calibrated L_b law for a
     new technology/box. The override is process-wide for the current run.

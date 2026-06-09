@@ -4,7 +4,7 @@ This is the BC-QACL forward model used as the EM-free inner-loop evaluator:
 
     (W_TF, alpha_L/W, alpha_wc/W)
         --[Cal_0529 SG-CL quasi-TEM solver]--> half-transformer 4-port S
-        --[L13 = L_b (log-trilinear law), L24 = open, L56 = short]
+        --[bridge L_b (L12/L34) via log-trilinear law; kernel slots L13=L_b, L24=open, L56=short]
         --[TF_Cal_S6P_Predicting_0504.build_tf_6port]--> center-tapped 6-port S
 
 The exact numeric kernels (SG-CL solver + six-port assembler) are vendored under
@@ -29,7 +29,7 @@ import tf_analysis_pipeline_cli_0529_v2 as _tfp  # type: ignore
 S4P_PORT_ORDER = ["E1_A", "MA_B", "E1_B", "MA_A"]
 SIX_PORT_NAMES = ["in1", "in2", "out1", "out2", "E1TAP", "MATAP"]
 
-# cal0529 "L13-only" six-port policy: L24 open, L56 short (verbatim from the kernel).
+# cal0529 bridge policy (kernel "L13-only"): L_b (L12/L34) active, L24 open, L56 short (verbatim).
 L24_OPEN_NH = float(_tfp.L24_OPEN_NH)
 L56_SHORT_PH = float(_tfp.L56_SHORT_PH)
 
@@ -93,8 +93,8 @@ def predict_six_port(
         Either a constant L_b in nH, or a callable ``(W, R, WlineR) -> L_b_nH``
         (e.g. :meth:`bcqacl_atd.lb_law.LogTrilinearLbLaw.predict`).
     L24_nH, L56_pH:
-        Bridge policy.  Defaults reproduce the cal0529 "L13-only" model
-        (L24 open, L56 short).
+        Bridge policy.  Defaults reproduce the cal0529 model: the L_b (L12/L34)
+        bridge active (kernel "L13-only"), L24 open, L56 short.
 
     Returns
     -------
@@ -114,7 +114,7 @@ def predict_six_port(
     s4.write_touchstone(str(cache / stem))  # -> <stem>.s4p
     s4p_path = cache / f"{stem}.s4p"
 
-    L13 = float(lb_nH(W_um, R, WlineR)) if callable(lb_nH) else float(lb_nH)
+    L_b = float(lb_nH(W_um, R, WlineR)) if callable(lb_nH) else float(lb_nH)
 
     cfg = dict(_tf0504.CFG)
     cfg.update({
@@ -124,7 +124,7 @@ def predict_six_port(
         "f_stop_ghz": float(freq_stop_ghz),
         "f_step_ghz": float(freq_step_ghz),
         "z0": float(z0_ohm),
-        "L13_nH": L13,
+        "L13_nH": L_b,  # kernel dict key; value is the paper's L_b (L12/L34)
         "L24_nH": float(L24_nH),
         "L56_pH": float(L56_pH),
         "s4p_port_order": S4P_PORT_ORDER,
@@ -137,7 +137,7 @@ def predict_six_port(
         pass
     meta = {
         "W_um": float(W_um), "R": float(R), "WlineR": float(WlineR),
-        "L13_nH": L13, "L24_nH": float(L24_nH), "L56_pH": float(L56_pH),
+        "L13_nH": L_b, "L24_nH": float(L24_nH), "L56_pH": float(L56_pH),
         "s4p_path": str(s4p_path),
     }
     return six, meta

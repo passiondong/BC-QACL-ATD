@@ -24,7 +24,7 @@ optimizer:
   restarts: 1
   sigma0: 0.26
   seed: 20260608
-  l13_model: anchors8     # embedded calibrated law; no anchor files needed
+  lb_model: anchors8      # embedded calibrated law; no anchor files needed
   polish_rounds: 0
 
 paths:

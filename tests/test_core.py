@@ -52,4 +52,4 @@ def test_config_yaml_roundtrip(tmp_path):
     cfg2 = Config.load(p)
     assert cfg2.target.band_lo_ghz == cfg.target.band_lo_ghz
     assert cfg2.design_space.w_tf_um.step == cfg.design_space.w_tf_um.step
-    assert cfg2.optimizer.l13_model == cfg.optimizer.l13_model
+    assert cfg2.optimizer.lb_model == cfg.optimizer.lb_model

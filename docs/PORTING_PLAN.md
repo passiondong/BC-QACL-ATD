@@ -28,7 +28,7 @@ Most of it is legacy variants pulled in for a few shared helpers.
 | `Cal_0509.py`, `Cal_0520.py` | config builder + frequency/geometry plumbing over Cal_0423 |
 | `Cal_0529_v2.py` | half-transformer→SG-CL geometry rule (0.75/1.8, `l_eff`), baseline params |
 | `Cal_0529_speed.py` | in-memory cache wrapper (the paper solver entry) |
-| `TF_Cal_S6P_Predicting_0504.py` | scikit-rf six-port assembly (2×SG-CL + bridges L13/L24/L56) |
+| `TF_Cal_S6P_Predicting_0504.py` | scikit-rf six-port assembly (2×SG-CL + L_b (L12/L34) bridge; kernel slots L13/L24/L56) |
 | `run_three_tf_v3_pa_cascade.py`, `tf_analysis_pipeline_cli_0529_v2.py` | six-port build + cascade helpers used by the cal0529 flow |
 | `bilinear_L_predictor.py`, `VCL_length_calculator.py`, `fit_simple_rounded_from_fit_data_20260511.py` | inductance/MSL helpers used by the assembler |
 
@@ -85,7 +85,7 @@ machine-specific roots remain in the source tree.
       stays clean at the **interface** layer below; the exact flow is driven from it.)*
 - [x] `flow.py` (Config → exact optimizer Namespace → `run()`, stages transistor
       files) + `cli.py` — **dry-run verified** (config maps to
-      the exact knobs: target 30–80, gain 16–20, 1200 evals, seed/polish/L13-model)
+      the exact knobs: target 30–80, gain 16–20, 1200 evals, seed/polish/L_b-model)
 - [x] `app/wizard.py` (Streamlit 6-step UI driving `flow.run_synthesis`) — syntax-verified (launch needs `pip install streamlit`)
 - [x] `data_io.py` helpers + synthetic demo data + `docs/data.md`
 - [x] **End-to-end smoke PASSED** — full synthesis on synthetic data in ~57 s (17 candidates, 12 hard-feasible, 4-point Pareto front, all CSVs written)

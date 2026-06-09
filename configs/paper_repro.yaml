@@ -29,7 +29,7 @@ optimizer:
   restarts: 6
   sigma0: 0.26
   seed: 20260608          # paper seed
-  l13_model: anchors8     # paper L13 source
+  lb_model: anchors8      # paper L_b (L12/L34) source
   polish_rounds: 2
   polish_top_k: 30
   polish_radius: 2

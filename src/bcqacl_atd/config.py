@@ -152,8 +152,9 @@ class OptimizerConfig:
     restarts: int = 6
     sigma0: float = 0.26
     seed: int = 20260608
-    # L_b (L13) source: "anchors8" (paper default) or "full80-log-trilinear"
-    l13_model: str = "anchors8"
+    # L_b (L12/L34) bridge-inductance source: "anchors8" (paper default) or
+    # "full80-log-trilinear"
+    lb_model: str = "anchors8"
     allow_extrapolation: bool = False
     # objective weights (unit weights by default; the final design is taken from
     # the (G, B, Z) Pareto front, so weights only steer exploration)
@@ -230,13 +231,18 @@ class Config:
                     kwargs[f.name] = v
             return dc_type(**kwargs)
 
+        # Back-compat: the optimizer's L_b source was formerly named "l13_model".
+        opt_payload = payload.get("optimizer")
+        if isinstance(opt_payload, Mapping) and "lb_model" not in opt_payload and "l13_model" in opt_payload:
+            opt_payload = {**opt_payload, "lb_model": opt_payload["l13_model"]}
+
         return cls(
             technology=build(TechnologyConfig, payload.get("technology")),
             target=build(TargetConfig, payload.get("target")),
             transistor=build(TransistorConfig, payload.get("transistor")),
             design_space=build(DesignSpaceConfig, payload.get("design_space")),
             anchors=build(AnchorConfig, payload.get("anchors")),
-            optimizer=build(OptimizerConfig, payload.get("optimizer")),
+            optimizer=build(OptimizerConfig, opt_payload),
             paths=build(PathsConfig, payload.get("paths")),
             freq_start_ghz=float(payload.get("freq_start_ghz", 1.0)),
             freq_stop_ghz=float(payload.get("freq_stop_ghz", 110.0)),
